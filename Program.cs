@@ -22,8 +22,7 @@ namespace BlogsConsole
                     Console.WriteLine("1) Display all blogs");
                     Console.WriteLine("2) Add Blog");
                     Console.WriteLine("3) Create Post");
-                    Console.WriteLine("4) Display Posts");
-                    Console.WriteLine("Enter 5 to quit");
+                    Console.WriteLine("Enter 4 to quit");
                     choice = Console.ReadLine();
                     Console.Clear();
                     logger.Info("Option {choice} selected", choice);
@@ -109,53 +108,8 @@ namespace BlogsConsole
                             logger.Error("Invalid Blog Id");
                         }
                     }
-                    else if (choice == "4")
-                    {
 
-                        var db = new BloggingContext();
-                        var query = db.Blogs.OrderBy(b => b.BlogId);
-                        Console.WriteLine("Select the blog's posts to display:");
-                        Console.WriteLine("0) Posts from all blogs");
-                        foreach (var item in query)
-                        {
-                            Console.WriteLine($"{item.BlogId}) Posts from {item.Name}");
-                        }
-
-                        if (int.TryParse(Console.ReadLine(), out int BlogId))
-                        {
-                            IEnumerable<Post> Posts;
-                            if (BlogId != 0 && db.Blogs.Count(b => b.BlogId == BlogId) == 0)
-                            {
-                                logger.Error("There are no Blogs saved with that Id");
-                            }
-                            else
-                            {
-
-                                Posts = db.Posts.OrderBy(p => p.Title);
-                                if (BlogId == 0)
-                                {
-
-                                    Posts = db.Posts.OrderBy(p => p.Title);
-                                }
-                                else
-                                {
-
-                                    Posts = db.Posts.Where(p => p.BlogId == BlogId).OrderBy(p => p.Title);
-                                }
-                                Console.WriteLine($"{Posts.Count()} post(s) returned");
-                                foreach (var item in Posts)
-                                {
-                                    Console.WriteLine($"Blog: {item.Blog.Name}\nTitle: {item.Title}\nContent: {item.Content}\n");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            logger.Error("Invalid Blog Id");
-                        }
-                    }
-
-                } while (choice != "5");
+                } while (choice != "4");
             }
             catch (Exception ex)
             {
@@ -190,36 +144,7 @@ namespace BlogsConsole
             return null;
         }
 
-        public static Post GetPost(BloggingContext db)
-        {
-
-            var blogs = db.Blogs.Include("Posts").OrderBy(b => b.Name);
-            foreach (Blog b in blogs)
-            {
-                Console.WriteLine(b.Name);
-                if (b.Posts.Count() == 0)
-                {
-                    Console.WriteLine($"  <no posts>");
-                }
-                else
-                {
-                    foreach (Post p in b.Posts)
-                    {
-                        Console.WriteLine($"  {p.PostId}) {p.Title}");
-                    }
-                }
-            }
-            if (int.TryParse(Console.ReadLine(), out int PostId))
-            {
-                Post post = db.Posts.FirstOrDefault(p => p.PostId == PostId);
-                if (post != null)
-                {
-                    return post;
-                }
-            }
-            logger.Error("Invalid Post Id");
-            return null;
-        }
+        
     }
 }
 
